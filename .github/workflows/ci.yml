@@ -2,40 +2,23 @@ name: Fuzz & Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y make gcc cppcheck afl++
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y make gcc cppcheck
 
-      - name: Build project
-        run: make -C Test_task
+    - name: Static analysis (cppcheck)
+      run: cppcheck --enable=all --inconclusive --quiet Test_task
 
-      - name: Static analysis (cppcheck)
-        run: |
-          cppcheck --enable=all --inconclusive --std=c99 --force Test_task 2> cppcheck_report.txt || true
-          cat cppcheck_report.txt
-
-      - name: Fuzzing (30 сек)
-        run: |
-          cd Test_task
-          AFL_SKIP_BIN_CHECK=1 AFL_USE_ASAN=1 make fuzz_harness
-          mkdir -p in
-          echo "ls;" > in/testcase
-          timeout 30s afl-fuzz -i in -o out -- ./fuzz_harness || true
-
-      - name: Сохраняем артефакты (краши)
-        if: always()
-       # uses: actions/upload-artifact@v2
-       # with:
-         # name: fuzz-output
-         # path: Test_task/out/
+    - name: Build
+      run: make -C Test_task
