@@ -22,6 +22,9 @@ trusty_reflection.o: trusty_reflection.c
 bhaskara.o: bhaskara.c
 	$(CC) -O0 -g -Wall -c -o bhaskara.o bhaskara.c
 
+fuzz_harness: fuzz_harness.c clever_williams.o kirch.o print_kirch.o trusty_reflection.o bhaskara.o
+        $(CC) -O0 -g -Wall -fsanitize=address -o fuzz_harness fuzz_harness.c clever_williams.o kirch.o print_kirch.o trusty_reflection.o bhaskara.o
+
 clean:
 	rm *.o
 	rm *.out
