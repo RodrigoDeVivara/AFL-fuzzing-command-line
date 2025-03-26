@@ -1,0 +1,43 @@
+stages:
+  - build
+  - analyze
+  - fuzz
+
+variables:
+  AFL_SKIP_BIN_CHECK: 1
+
+build:
+  stage: build
+  image: gcc:latest
+  script:
+    - apt-get update && apt-get install -y make
+    - make -C Test_task
+  artifacts:
+    paths:
+      - Test_task/
+    expire_in: 1 hour
+
+analyze:
+  stage: analyze
+  image: cppcheck/cppcheck
+  script:
+    - cppcheck --enable=all --inconclusive --std=c99 --force Test_task 2> cppcheck_report.txt  true
+  artifacts:
+    paths:
+      - cppcheck_report.txt
+    expire_in: 1 hour
+
+fuzz:
+  stage: fuzz
+  image: aflplusplus/aflplusplus
+  script:
+    - cd Test_task
+    - make clean  true
+    - AFL_USE_ASAN=1 make fuzz_harness
+    - mkdir -p in
+    - echo "ls -la;" > in/testcase
+    - afl-fuzz -i in -o out -- ./fuzz_harness
+  artifacts:
+    paths:
+      - Test_task/out
+    expire_in: 1 hour
