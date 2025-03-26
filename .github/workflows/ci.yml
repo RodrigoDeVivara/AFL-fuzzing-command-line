@@ -35,7 +35,7 @@ jobs:
 
       - name: Сохраняем артефакты (краши)
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: fuzz-output
           path: Test_task/out/
