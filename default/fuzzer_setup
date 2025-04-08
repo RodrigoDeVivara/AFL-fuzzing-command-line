@@ -1,0 +1,7 @@
+# environment variables:
+AFL_CUSTOM_INFO_PROGRAM=./fuzz_harness
+AFL_CUSTOM_INFO_PROGRAM_ARGV=
+AFL_CUSTOM_INFO_OUT=/home/ivan/afl_outputs/out/default
+AFL_USE_ASAN=1
+# command line:
+'afl-fuzz' '-i' 'in' '-o' '/home/ivan/afl_outputs/out' '-m' 'none' '--' './fuzz_harness'
