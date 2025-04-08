@@ -8,7 +8,7 @@
 
 ```bash
 make clean
-
+```bash
 
 Затем запустите компиляцию с AFL++:
 AFL_USE_ASAN=1 CC=afl-clang-lto CXX=afl-clang-lto++ AR=llvm-ar RANLIB=llvm-ranlib AS=llvm-as CFLAGS="-O0 -g -fprofile-instr-generate -fcoverage-mapping" make fuzz_harness
